@@ -1,0 +1,53 @@
+<% content_for :title, "Checkout · Shelfwise" %>
+
+<h1>Checkout</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Book</th>
+      <th class="numeric">Quantity</th>
+      <th class="numeric">Price</th>
+      <th class="numeric">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% current_cart.items.includes(:book).each do |item| %>
+      <tr>
+        <td><%= item.book.title %></td>
+        <td class="numeric"><%= item.quantity %></td>
+        <td class="numeric"><%= money(item.book.price_cents) %></td>
+        <td class="numeric"><%= money(item.amount_cents) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" class="numeric strong">Total</td>
+      <td class="numeric strong"><%= money(current_cart.total_cents) %></td>
+    </tr>
+  </tfoot>
+</table>
+
+<section>
+  <%= form_with model: @order, url: checkout_path, class: "form form-narrow" do |form| %>
+    <%= render "shared/errors", record: @order %>
+
+    <%= form.label :customer_name, class: "field" do %>
+      Name
+      <%= form.text_field :customer_name, required: true %>
+    <% end %>
+
+    <%= form.label :email, class: "field" do %>
+      Email
+      <%= form.email_field :email, required: true %>
+    <% end %>
+
+    <%= form.label :shipping_address, class: "field" do %>
+      Shipping address
+      <%= form.text_area :shipping_address, rows: 3, required: true %>
+    <% end %>
+
+    <%= form.submit "Place order", class: "button button-primary" %>
+  <% end %>
+</section>

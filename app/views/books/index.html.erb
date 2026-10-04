@@ -1,0 +1,26 @@
+<% content_for :title, "Catalogue · Shelfwise" %>
+
+<h1>Catalogue</h1>
+
+<nav class="pills">
+  <%= link_to "All", root_path, class: [ "pill", { "pill-active": @genre.nil? } ] %>
+  <% Book::GENRES.each do |genre| %>
+    <%= link_to genre, root_path(genre:), class: [ "pill", { "pill-active": @genre == genre } ] %>
+  <% end %>
+</nav>
+
+<div class="books">
+  <% @books.each do |book| %>
+    <div class="card book-card">
+      <%= render "books/cover", book: %>
+      <%= link_to book.title, book, class: "strong-link" %>
+      <p class="muted"><%= book.author %></p>
+      <p class="price">
+        <%= money(book.price_cents) %>
+        <% unless book.in_stock? %>
+          <span class="out-of-stock">Out of stock</span>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+</div>

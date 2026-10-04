@@ -1,0 +1,43 @@
+<% content_for :title, "#{@book.title} · Shelfwise" %>
+
+<div class="book-detail">
+  <%= render "books/cover", book: @book %>
+  <div class="book-info">
+    <div>
+      <h1><%= @book.title %></h1>
+      <p class="muted">by <%= @book.author %></p>
+    </div>
+
+    <dl class="details">
+      <div>
+        <dt>Genre</dt>
+        <dd><%= @book.genre %></dd>
+      </div>
+      <div>
+        <dt>Published</dt>
+        <dd><%= @book.published_year %></dd>
+      </div>
+      <div>
+        <dt>ISBN</dt>
+        <dd><%= @book.isbn %></dd>
+      </div>
+    </dl>
+
+    <p><%= @book.description %></p>
+
+    <p class="book-price"><%= money(@book.price_cents) %></p>
+
+    <% if @book.in_stock? %>
+      <p class="muted"><%= @book.stock %> in stock</p>
+      <%= form_with url: add_cart_path(@book), class: "add-to-cart" do |form| %>
+        <%= form.label :quantity, class: "field" do %>
+          Quantity
+          <%= form.number_field :quantity, value: 1, min: 1, required: true %>
+        <% end %>
+        <%= form.submit "Add to cart", class: "button button-primary" %>
+      <% end %>
+    <% else %>
+      <p class="out-of-stock">Out of stock</p>
+    <% end %>
+  </div>
+</div>

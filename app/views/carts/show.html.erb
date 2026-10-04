@@ -1,0 +1,45 @@
+<% content_for :title, "Cart · Shelfwise" %>
+
+<h1>Cart</h1>
+
+<% if @items.empty? %>
+  <p class="muted">Your cart is empty. <%= link_to "Browse the catalogue", root_path %></p>
+<% else %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th class="numeric">Price</th>
+        <th class="numeric">Quantity</th>
+        <th></th>
+        <th class="numeric">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @items.each do |item| %>
+        <tr>
+          <td><%= link_to item.book.title, item.book, class: "strong-link" %></td>
+          <td class="numeric"><%= money(item.book.price_cents) %></td>
+          <td class="numeric">
+            <%= form_with url: update_cart_path(item.book), class: "quantity-form" do |form| %>
+              <%= form.number_field :quantity, value: item.quantity, min: 0, required: true, id: nil, "aria-label": "Quantity" %>
+              <%= form.submit "Update", class: "button" %>
+            <% end %>
+          </td>
+          <td><%= button_to "Remove", remove_cart_path(item.book), class: "link-button" %></td>
+          <td class="numeric"><%= money(item.amount_cents) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="numeric strong">Total</td>
+        <td class="numeric strong"><%= money(current_cart.total_cents) %></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="actions actions-end">
+    <%= link_to "Checkout", checkout_path, class: "button button-primary" %>
+  </div>
+<% end %>

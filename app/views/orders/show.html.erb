@@ -1,0 +1,65 @@
+<% content_for :title, "#{@order.number} · Shelfwise" %>
+
+<div class="page-header">
+  <div class="title-row">
+    <h1><%= @order.number %></h1>
+    <%= status_badge(@order.status) %>
+  </div>
+  <% if @order.placed? %>
+    <div class="actions">
+      <%= button_to "Mark as shipped", ship_order_path(@order), class: "button button-success" %>
+    </div>
+  <% end %>
+</div>
+
+<dl class="card details">
+  <div>
+    <dt>Placed</dt>
+    <dd><%= date_time(@order.created_at) %></dd>
+  </div>
+  <% if @order.shipped_at %>
+    <div>
+      <dt>Shipped</dt>
+      <dd><%= date_time(@order.shipped_at) %></dd>
+    </div>
+  <% end %>
+  <div>
+    <dt>Customer</dt>
+    <dd><%= @order.customer_name %></dd>
+  </div>
+  <div>
+    <dt>Email</dt>
+    <dd><%= @order.email %></dd>
+  </div>
+  <div>
+    <dt>Ship to</dt>
+    <dd class="address"><%= @order.shipping_address %></dd>
+  </div>
+</dl>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Book</th>
+      <th class="numeric">Quantity</th>
+      <th class="numeric">Unit price</th>
+      <th class="numeric">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @order.items.each do |item| %>
+      <tr>
+        <td><%= item.title %></td>
+        <td class="numeric"><%= item.quantity %></td>
+        <td class="numeric"><%= money(item.unit_price_cents) %></td>
+        <td class="numeric"><%= money(item.amount_cents) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" class="numeric strong">Total</td>
+      <td class="numeric strong"><%= money(@order.total_cents) %></td>
+    </tr>
+  </tfoot>
+</table>
